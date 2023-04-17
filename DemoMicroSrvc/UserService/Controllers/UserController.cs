@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using UserService.Database;
+using UserService.Database.Entities;
 
 namespace UserService.Controllers
 {
@@ -11,11 +12,18 @@ namespace UserService.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+
+        DatabaseContext db;
+        public UserController()
+        {
+            db = new DatabaseContext();
+        }
+
         // GET: api/<UserController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<User> Get()
         {
-            return new string[] { "value1", "value2" };
+            return db.Users.ToList();
         }
 
         // GET api/<UserController>/5
