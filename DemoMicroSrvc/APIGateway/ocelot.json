@@ -19,7 +19,7 @@
         {
           "Host": "localhost",
           "Port": "35696"
-        }
+        } 
       ],
       "UpstreamPathTemplate": "/user/{id}",
       "UpstreamHttpMethod": [ "GET" ]
