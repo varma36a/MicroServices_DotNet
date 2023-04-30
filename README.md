@@ -1,7 +1,5 @@
 # MicroServices_DotNet
 
-React is a JavaScript library for building user interfaces.
-
 rabbitmqctl status
 
 C:\Program Files\RabbitMQ Server\rabbitmq_server-3.11.13\sbin to execute commands
