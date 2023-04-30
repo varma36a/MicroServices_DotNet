@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SharedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +34,35 @@ namespace InventoryService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InventoryService", Version = "v1" });
             });
+
+
+            services.AddMassTransit(config =>
+            {
+                config.AddConsumer<OrderConsumer>();
+                config.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host("localhost", "/", h =>
+                    {
+                        h.Username(Configuration["ServiceBus:Username"]);
+                        h.Password(Configuration["ServiceBus:Password"]);
+                    });
+
+                    cfg.ReceiveEndpoint(Configuration["ServiceBus:Queue"], c =>
+                    {
+                        c.ConfigureConsumer<OrderConsumer>(ctx);
+                    });
+                 
+                });
+
+
+            });
+
+            //services.Configure<MassTransitHostOptions>(options =>
+            //{
+            //    options.WaitUntilStarted = true;
+            //    options.StartTimeout = TimeSpan.FromSeconds(30);
+            //    options.StopTimeout = TimeSpan.FromMinutes(1);
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

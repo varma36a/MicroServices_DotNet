@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SharedModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,21 +38,22 @@ namespace OrderService
             {
                 config.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host(new Uri(Configuration["ServiceBus:Uri"]),
-                    h =>
+                    cfg.Host("localhost", "/", h => 
                     {
                         h.Username(Configuration["ServiceBus:Username"]);
                         h.Password(Configuration["ServiceBus:Password"]);
                     });
+
                 });
+
             });
 
-            services.Configure<MassTransitHostOptions>(options =>
-            {
-                options.WaitUntilStarted = true;
-                options.StartTimeout = TimeSpan.FromSeconds(30);
-                options.StopTimeout = TimeSpan.FromMinutes(1);
-            });
+            //services.Configure<MassTransitHostOptions>(options =>
+            //{
+            //    options.WaitUntilStarted = true;
+            //    options.StartTimeout = TimeSpan.FromSeconds(30);
+            //    options.StopTimeout = TimeSpan.FromMinutes(1);
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
