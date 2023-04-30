@@ -1,4 +1,3 @@
-using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,7 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-namespace OrderService
+
+namespace InventoryService
 {
     public class Startup
     {
@@ -30,27 +30,7 @@ namespace OrderService
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderService", Version = "v1" });
-            });
-
-            services.AddMassTransit(config =>
-            {
-                config.UsingRabbitMq((ctx, cfg) =>
-                {
-                    cfg.Host(new Uri(Configuration["ServiceBus:Uri"]),
-                    h =>
-                    {
-                        h.Username(Configuration["ServiceBus:Username"]);
-                        h.Password(Configuration["ServiceBus:Password"]);
-                    });
-                });
-            });
-
-            services.Configure<MassTransitHostOptions>(options =>
-            {
-                options.WaitUntilStarted = true;
-                options.StartTimeout = TimeSpan.FromSeconds(30);
-                options.StopTimeout = TimeSpan.FromMinutes(1);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "InventoryService", Version = "v1" });
             });
         }
 
@@ -61,7 +41,7 @@ namespace OrderService
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderService v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InventoryService v1"));
             }
 
             app.UseHttpsRedirection();
