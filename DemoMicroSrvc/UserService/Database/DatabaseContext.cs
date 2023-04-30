@@ -14,7 +14,7 @@ namespace UserService.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=ROHIT36A\SQLEXPRESS; Initial Catalog=UserMicroservice;UID=project1; PWD=Varma@123;");
+            optionsBuilder.UseSqlServer(@"Data Source=ROHIT36A\SQLEXPRESS; Initial Catalog=UserMicroservice;UID=project1; PWD=Welcome@2023;");
         }
     }
 }
