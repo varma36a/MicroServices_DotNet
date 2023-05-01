@@ -46,9 +46,9 @@ namespace MicroRabbit.Infra.CrossCutting.Bus
                 var factory = new ConnectionFactory()
                 {
                     HostName = _hostName,
-                    Port = 5672,
-                    UserName = "test1",
-                    Password = "test1"
+                    //Port = 5672,
+                    //UserName = "test1",
+                    //Password = "test1"
                 };
 
 
