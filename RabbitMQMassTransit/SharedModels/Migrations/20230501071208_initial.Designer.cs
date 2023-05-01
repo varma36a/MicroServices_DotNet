@@ -8,7 +8,7 @@ using SharedModels;
 
 namespace SharedModels.Migrations
 {
-    [DbContext(typeof(AppDBContext))]
+    [DbContext(typeof(AppDbContext))]
     [Migration("20230501071208_initial")]
     partial class initial
     {

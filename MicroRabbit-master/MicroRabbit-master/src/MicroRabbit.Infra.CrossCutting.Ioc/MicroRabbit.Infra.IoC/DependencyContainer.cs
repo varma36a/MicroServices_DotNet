@@ -1,0 +1,71 @@
+﻿using MassTransit;
+using MediatR;
+using MicroRabbit.Banking.Application.Interfaces;
+using MicroRabbit.Banking.Application.Services;
+using MicroRabbit.Banking.Data.Context;
+using MicroRabbit.Banking.Data.Repository;
+using MicroRabbit.Banking.Domain.Interfaces;
+using MicroRabbit.Domain.Core.Bus;
+using MicroRabbit.Infra.CrossCutting.Bus;
+using MicroRabbit.Transfer.Application.EventHandler;
+using MicroRabbit.Transfer.Application.Interfaces;
+using MicroRabbit.Transfer.Application.Services;
+using MicroRabbit.Transfer.Data.Context;
+using MicroRabbit.Transfer.Data.Repository;
+using MicroRabbit.Transfer.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+namespace MicroRabbit.Infra.CrossCutting.Ioc
+{
+    public class DependencyContainer
+    {
+        public IConfiguration Configuration { get; }
+
+        public DependencyContainer(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
+        {
+            //Domain Bus
+            services.AddTransient<IEventBus, RabbitMqBus>(sp =>
+            {
+                var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+                return new RabbitMqBus(sp.GetService<IMediator>(), scopeFactory, configuration.GetSection("MessageBroker:Host").Value, sp.GetService<ILogger<RabbitMqBus>>());
+            });
+
+
+            //services.AddMassTransit(config =>
+            //{
+            //    config.UsingRabbitMq((ctx, cfg) =>
+            //    {
+            //        cfg.Host("localhost", "/", h =>
+            //        {
+            //            //configuration.GetSection("ServiceBus:Username").Value
+            //            h.Username(configuration.GetSection("ServiceBus:Username").Value);
+            //            h.Password(configuration.GetSection("ServiceBus:Password").Value);
+            //        });
+
+            //    });
+
+            //});
+
+
+            //Subscriptions
+            services.AddTransient<TransferCreatedEventHandler>();
+
+            //Application Services
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<ITransferService, TransferService>();
+
+            //Data
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<ITransferLogRepository, TransferLogRepository>();
+            services.AddTransient<BankingDbContext>();
+            services.AddTransient<TransferDbContext>();
+        }
+    }
+}

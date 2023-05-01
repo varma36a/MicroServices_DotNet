@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace SharedModels
 {
-    public class AppDBContext : DbContext
+    public class AppDbContext : DbContext
     {
 
-        public AppDBContext()
+        public AppDbContext()
         {
 
         }
-        public AppDBContext(DbContextOptions<AppDBContext> options):base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options):base(options)
         {
 
         }
 
-        public DbSet<Product> products { get; set; }
+        public DbSet<Product> Products { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
