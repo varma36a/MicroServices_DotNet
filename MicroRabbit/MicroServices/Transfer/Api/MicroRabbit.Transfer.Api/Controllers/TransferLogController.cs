@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using MicroRabbit.Banking.Application.Queries;
 using MicroRabbit.Transfer.Application.Interfaces;
 using MicroRabbit.Transfer.Application.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,8 @@ namespace MicroRabbit.Transfer.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<List<TransferLogViewModel>>> Get()
         {
-            var results = await _transferService.GetTransferLogs();
-            return Ok(results);
+            var result = await _mediator.Send(new TransferLogViewQuery());
+            return Ok(result);
         }
     }
 }
