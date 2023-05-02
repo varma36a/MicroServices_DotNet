@@ -38,22 +38,6 @@ namespace MicroRabbit.Infra.CrossCutting.Ioc
             });
 
 
-            //services.AddMassTransit(config =>
-            //{
-            //    config.UsingRabbitMq((ctx, cfg) =>
-            //    {
-            //        cfg.Host("localhost", "/", h =>
-            //        {
-            //            //configuration.GetSection("ServiceBus:Username").Value
-            //            h.Username(configuration.GetSection("ServiceBus:Username").Value);
-            //            h.Password(configuration.GetSection("ServiceBus:Password").Value);
-            //        });
-
-            //    });
-
-            //});
-
-
             //Subscriptions
             services.AddTransient<TransferCreatedEventHandler>();
 
