@@ -68,6 +68,13 @@ namespace MicroRabbit.Order.Api
                 });
             });
 
+            services.Configure<MassTransitHostOptions>(options =>
+            {
+                options.WaitUntilStarted = true;
+                options.StartTimeout = TimeSpan.FromSeconds(30);
+                options.StopTimeout = TimeSpan.FromMinutes(1);
+            });
+
             services.AddDbContext<OrderDbContext>(o =>o.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
             services.AddScoped<IOrderDataAccess, OrderDataAccess>();
 
