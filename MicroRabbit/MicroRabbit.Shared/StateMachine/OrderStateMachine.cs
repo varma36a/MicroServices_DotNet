@@ -18,16 +18,16 @@ namespace Shared.StateMachine
                    When(OrderStated)
                    .Then(ctx =>
                    {
-                       ctx.Instance.OrderCreationDateTime = DateTime.Now;
-                       ctx.Instance.OrderId = ctx.Data.OrderId;
-                       ctx.Instance.Product = ctx.Data.Product;
-                       ctx.Instance.Price = ctx.Data.Price;
+                       ctx.Saga.OrderCreationDateTime = DateTime.Now;
+                       ctx.Saga.OrderId = ctx.Message.OrderId;
+                       ctx.Saga.Product = ctx.Message.Product;
+                       ctx.Saga.Price = ctx.Message.Price;
                    })
                    .TransitionTo(Started)
-                   .Publish(ctx => new OrderValidate(ctx.Instance)));
+                   .Publish(ctx => new OrderValidate(ctx.Saga)));
 
             During(Started, When(OrderCancelled)
-                   .Then(ctx => ctx.Instance.OrderCancelDateTime = DateTime.Now)
+                   .Then(ctx => ctx.Saga.OrderCancelDateTime = DateTime.Now)
                    .TransitionTo(Cancelled));
         }
 
