@@ -1,28 +1,21 @@
 using MassTransit;
-using MicorRabbit.Order.Data.Context;
-using MicroRabbit.Order.Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Order.Api.Consumers;
 using Shared.BusConfiguration;
-using Shared.DbCOnfiguration;
-using Shared.Messages.Commands;
-using Shared.StateMachine;
+using StockService.Consumer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MicroRabbit.Order.Api
+namespace MicroRabbit.Stock.Api
 {
     public class Startup
     {
@@ -36,25 +29,9 @@ namespace MicroRabbit.Order.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
             services.AddMassTransit(cfg =>
             {
-                cfg.AddRequestClient<IOrderInitiate>();
-
-                cfg.AddConsumer<OrderStartConsumer>();
-                cfg.AddConsumer<OrderCancelledConsumer>();
-
-                //for state machine
-                cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
-                       .EntityFrameworkRepository(r =>
-                       {
-                           r.ConcurrencyMode = ConcurrencyMode.Pessimistic;
-                           r.AddDbContext<DbContext, OrderStateDbContext>((provider, builder) =>
-                           {
-                               builder.UseSqlServer(Configuration.GetConnectionString("DbConnection"));
-                           });
-                       });
-
+                cfg.AddConsumer<OrderValidateConsumer>();
                 cfg.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.ConfigureEndpoints(context);
@@ -68,13 +45,10 @@ namespace MicroRabbit.Order.Api
                 });
             });
 
-            services.AddDbContext<OrderDbContext>(o =>o.UseSqlServer(Configuration.GetConnectionString("DbConnection")));
-            services.AddScoped<IOrderDataAccess, OrderDataAccess>();
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderService", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "StockService", Version = "v1" });
             });
         }
 
@@ -85,7 +59,7 @@ namespace MicroRabbit.Order.Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrderService v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "StockService v1"));
             }
 
             app.UseHttpsRedirection();
